@@ -2,10 +2,13 @@ package ec.telconet.cristhian_baidal.utils;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -84,7 +87,9 @@ public class JwtUtils {
     public UsernamePasswordAuthenticationToken getAuthenticationToken(String token, Claims claims) {
         // Obtener el email o username desde las claims
         String email = claims.get("mail", String.class); // El subject es normalmente el email o username
+        String rol = claims.get("rol", String.class);
+        List<GrantedAuthority> authorities = rol != null ? List.of(new SimpleGrantedAuthority("ROLE_" + rol.toUpperCase())) : Collections.emptyList();
         // Crear el objeto de autenticación
-        return new UsernamePasswordAuthenticationToken( email, claims, Collections.emptyList() );
+        return new UsernamePasswordAuthenticationToken( email, claims, authorities );
     }
 }

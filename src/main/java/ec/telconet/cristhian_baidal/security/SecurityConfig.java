@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -37,7 +38,10 @@ public class SecurityConfig {
             		"/api/auth/me", 
             		"/api/rol"
             ).permitAll() // Permitir acceso a estas rutas
-            .anyRequest().authenticated() // Proteger las demás rutas
+            .requestMatchers(
+            		HttpMethod.DELETE, "/api/usuarios/{id}"
+            ).hasRole("SUPERADMIN")
+            .anyRequest().authenticated() // Protege	r las demás rutas
         )
         // Agregar el filtro JWT antes del filtro de autenticación predeterminado
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
